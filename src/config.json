@@ -1,0 +1,56 @@
+{
+  "banner": {
+    "title": "We value your privacy",
+    "message": "We use cookies to enhance your browsing experience, serve personalised content, and analyse our traffic. By clicking \"Accept All\", you consent to our use of cookies.",
+    "privacyPolicyUrl": "/privacy-policy",
+    "privacyPolicyText": "Privacy Policy"
+  },
+  "categories": [
+    {
+      "id": "necessary",
+      "name": "Necessary",
+      "description": "Necessary cookies are required to enable the basic features of this site, such as providing secure log-in or adjusting your consent preferences. These cookies do not store any personally identifiable data.",
+      "required": true,
+      "cookies": [
+        { "name": "cookieyes-consent", "duration": "1 year", "description": "Stores the user's cookie consent preferences." }
+      ]
+    },
+    {
+      "id": "functional",
+      "name": "Functional",
+      "description": "Functional cookies help perform certain functionalities like sharing content on social media platforms, collecting feedback, and other third-party features.",
+      "required": false,
+      "cookies": [
+        { "name": "lang", "duration": "session", "description": "Remembers the visitor's selected language." }
+      ]
+    },
+    {
+      "id": "analytics",
+      "name": "Analytics",
+      "description": "Analytical cookies are used to understand how visitors interact with the website, helping us improve our site and services.",
+      "required": false,
+      "cookies": [
+        { "name": "_ga", "duration": "1 year 1 month 4 days", "description": "Registers a unique ID for statistical purposes (Google Analytics)." },
+        { "name": "_gid", "duration": "1 day", "description": "Registers a unique ID to generate statistical data on visitor usage." }
+      ]
+    },
+    {
+      "id": "performance",
+      "name": "Performance",
+      "description": "Performance cookies are used to understand and analyse key performance indexes of the website, improving visitor experience.",
+      "required": false,
+      "cookies": [
+        { "name": "perf_data", "duration": "30 minutes", "description": "Used to track page load performance." }
+      ]
+    },
+    {
+      "id": "advertisement",
+      "name": "Advertisement",
+      "description": "Advertisement cookies are used to provide visitors with relevant ads and marketing campaigns, tracking visitors across websites.",
+      "required": false,
+      "cookies": [
+        { "name": "_fbp", "duration": "3 months", "description": "Used by Facebook to deliver advertisements." }
+      ]
+    }
+  ]
+}
