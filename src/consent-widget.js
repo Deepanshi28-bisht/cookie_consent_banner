@@ -1,31 +1,33 @@
 (function () {
   "use strict";
 
-  var COOKIE_NAME = "cc_consent";
-  var COOKIE_DAYS = 365;
+  let COOKIE_NAME = "cc_consent";
+  let COOKIE_DAYS = 365;
 
   function setCookie(name, value, days) {
-    var expires = new Date();
+    let expires = new Date();
     expires.setTime(expires.getTime() + days * 24 * 60 * 60 * 1000);
     document.cookie =
-      name + "=" + encodeURIComponent(value) +
-      "; expires=" + expires.toUTCString() +
+      name +
+      "=" +
+      encodeURIComponent(value) +
+      "; expires=" +
+      expires.toUTCString() +
       "; path=/; SameSite=Lax";
   }
 
   function getCookie(name) {
-    var match = document.cookie.match(
-      new RegExp("(^|; )" + name + "=([^;]*)")
-    );
+    let match = document.cookie.match(new RegExp("(^|; )" + name + "=([^;]*)"));
     return match ? decodeURIComponent(match[2]) : null;
   }
 
   function deleteCookie(name) {
-    document.cookie = name + "=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
+    document.cookie =
+      name + "=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
   }
 
   function getConsent() {
-    var raw = getCookie(COOKIE_NAME);
+    let raw = getCookie(COOKIE_NAME);
     return raw ? JSON.parse(raw) : null;
   }
 
@@ -35,9 +37,15 @@
 
   // Figure out where this script file lives, so config.json can be
   // found relative to it (not relative to whatever page includes it).
-  var scriptEl = document.currentScript;
-  var baseUrl = scriptEl ? scriptEl.src.replace(/[^/]+$/, "") : "./";
-  var CONFIG_URL = baseUrl + "config.json";
+  let scriptEl = document.currentScript;
+  console.log(scriptEl, "scriptllll");
+
+  let baseUrl = scriptEl ? scriptEl.src.replace(/[^/]+$/, "") : "./";
+  console.log(baseUrl, "base");
+
+  let CONFIG_URL = baseUrl + "config.json";
+
+  console.log(CONFIG_URL, "CONFIG_URL");
 
   function loadConfig() {
     return fetch(CONFIG_URL).then(function (res) {
@@ -46,7 +54,7 @@
   }
 
   function allowAllConsent(config) {
-    var consent = {};
+    let consent = {};
     config.categories.forEach(function (cat) {
       consent[cat.id] = true;
     });
@@ -54,7 +62,7 @@
   }
 
   function necessaryOnlyConsent(config) {
-    var consent = {};
+    let consent = {};
     config.categories.forEach(function (cat) {
       consent[cat.id] = !!cat.required;
     });
@@ -62,26 +70,26 @@
   }
 
   function createBannerElement(config) {
-    var banner = document.createElement("div");
+    let banner = document.createElement("div");
     banner.id = "cc-banner";
     banner.className = "cc-banner";
     banner.innerHTML =
       '<div class="cc-banner__content">' +
-        '<h2 class="cc-banner__title"></h2>' +
-        '<p class="cc-banner__message"></p>' +
+      '<h2 class="cc-banner__title"></h2>' +
+      '<p class="cc-banner__message"></p>' +
       "</div>" +
       '<div class="cc-banner__actions">' +
-        '<button type="button" class="cc-btn cc-btn--outline" id="cc-customise">Customise</button>' +
-        '<button type="button" class="cc-btn cc-btn--outline" id="cc-reject">Reject All</button>' +
-        '<button type="button" class="cc-btn cc-btn--solid" id="cc-accept">Accept All</button>' +
+      '<button type="button" class="cc-btn cc-btn--outline" id="cc-customise">Customise</button>' +
+      '<button type="button" class="cc-btn cc-btn--solid" id="cc-reject">Reject All</button>' +
+      '<button type="button" class="cc-btn cc-btn--solid" id="cc-accept">Accept All</button>' +
       "</div>";
 
     banner.querySelector(".cc-banner__title").textContent = config.banner.title;
 
-    var messageEl = banner.querySelector(".cc-banner__message");
+    let messageEl = banner.querySelector(".cc-banner__message");
     messageEl.textContent = config.banner.message + " ";
 
-    var link = document.createElement("a");
+    let link = document.createElement("a");
     link.href = config.banner.privacyPolicyUrl;
     link.className = "cc-banner__link";
     link.textContent = config.banner.privacyPolicyText;
@@ -91,10 +99,10 @@
   }
 
   function showBanner(config) {
-    var banner = createBannerElement(config);
+    let banner = createBannerElement(config);
     document.body.appendChild(banner);
 
-       banner.querySelector("#cc-accept").addEventListener("click", function () {
+    banner.querySelector("#cc-accept").addEventListener("click", function () {
       saveConsent(allowAllConsent(config));
       banner.remove();
       updateFloatingIcon();
@@ -106,11 +114,11 @@
       updateFloatingIcon();
     });
 
-
-      banner.querySelector("#cc-customise").addEventListener("click", function () {
-      openPopup(config);
-    });
-
+    banner
+      .querySelector("#cc-customise")
+      .addEventListener("click", function () {
+        openPopup(config);
+      });
   }
 
   function buildCategoryRow(cat, currentConsent) {
@@ -118,16 +126,28 @@
     row.className = "cc-category";
 
     var checked = currentConsent ? !!currentConsent[cat.id] : !!cat.required;
-    var disabledAttr = cat.required ? "disabled" : "";
+
+    var toggleHtml;
+    if (cat.required) {
+      toggleHtml =
+        '<span class="cc-category__always-active">Always Active</span>';
+    } else {
+      toggleHtml =
+        '<label class="cc-toggle">' +
+        '<input type="checkbox" data-category="' +
+        cat.id +
+        '" ' +
+        (checked ? "checked" : "") +
+        ">" +
+        '<span class="cc-toggle__slider"></span>' +
+        "</label>";
+    }
 
     row.innerHTML =
       '<div class="cc-category__row">' +
-        '<span class="cc-category__name"></span>' +
-        '<label class="cc-toggle">' +
-          '<input type="checkbox" data-category="' + cat.id + '" ' +
-            (checked ? "checked " : "") + disabledAttr + ">" +
-          '<span class="cc-toggle__slider"></span>' +
-        "</label>" +
+      '<span><span class="cc-category__chevron">&#9656;</span>' +
+      '<span class="cc-category__name"></span></span>' +
+      toggleHtml +
       "</div>" +
       '<p class="cc-category__desc"></p>' +
       '<div class="cc-category__cookies"></div>';
@@ -136,6 +156,8 @@
     row.querySelector(".cc-category__desc").textContent = cat.description;
 
     var cookiesEl = row.querySelector(".cc-category__cookies");
+    var chevronEl = row.querySelector(".cc-category__chevron");
+
     cat.cookies.forEach(function (cookie) {
       var cookieRow = document.createElement("div");
       cookieRow.className = "cc-cookie-row";
@@ -150,59 +172,82 @@
       cookiesEl.appendChild(cookieRow);
     });
 
-    // Clicking the row (but not the toggle itself) expands/collapses cookies
-    row.querySelector(".cc-category__row").addEventListener("click", function (e) {
-      if (e.target.closest(".cc-toggle")) return;
-      cookiesEl.classList.toggle("cc-open");
-    });
+    row
+      .querySelector(".cc-category__row")
+      .addEventListener("click", function (e) {
+        if (e.target.closest(".cc-toggle")) return;
+        cookiesEl.classList.toggle("cc-open");
+        chevronEl.classList.toggle("cc-open");
+      });
 
     return row;
   }
 
   function readTogglesAsConsent(popup, config) {
-    var consent = {};
+    let consent = {};
     config.categories.forEach(function (cat) {
-      var input = popup.querySelector('input[data-category="' + cat.id + '"]');
+      let input = popup.querySelector('input[data-category="' + cat.id + '"]');
       consent[cat.id] = cat.required ? true : input.checked;
     });
     return consent;
   }
 
   function closePopup() {
-    var overlay = document.getElementById("cc-overlay");
+    let overlay = document.getElementById("cc-overlay");
     if (overlay) overlay.remove();
   }
 
   function openPopup(config) {
     if (document.getElementById("cc-overlay")) return;
 
-    var currentConsent = getConsent();
+    let currentConsent = getConsent();
 
-    var overlay = document.createElement("div");
+    let overlay = document.createElement("div");
     overlay.id = "cc-overlay";
     overlay.className = "cc-overlay";
 
-    var popup = document.createElement("div");
+    let popup = document.createElement("div");
     popup.className = "cc-popup";
     popup.setAttribute("role", "dialog");
     popup.setAttribute("aria-modal", "true");
 
     popup.innerHTML =
       '<div class="cc-popup__header">' +
-        "<h2>Cookie Preferences</h2>" +
-        '<button type="button" class="cc-popup__close" aria-label="Close">&times;</button>' +
+      "<h2>Customise Consent Preferences</h2>" +
+      '<button type="button" class="cc-popup__close" aria-label="Close">&times;</button>' +
       "</div>" +
-      '<div class="cc-popup__body"></div>' +
+           '<div class="cc-popup__body">' +
+        '<div class="cc-popup__intro">' +
+          "<p>We use cookies to help you navigate efficiently and perform certain functions. You will find detailed information about all cookies under each consent category below.</p>" +
+          '<div class="cc-popup__intro-more" style="display:none;">' +
+            '<p>The cookies that are categorised as "Necessary" are stored on your browser as they are essential for enabling the basic functionalities of the site.</p>' +
+            "<p>We also use third-party cookies that help us analyse how you use this website, store your preferences, and provide the content and advertisements that are relevant to you. These cookies will only be stored in your browser with your prior consent.</p>" +
+            "<p>You can choose to enable or disable some or all of these cookies but disabling some of them may affect your browsing experience.</p>" +
+          "</div>" +
+          '<a class="cc-popup__intro-toggle">Show more</a>' +
+        "</div>" +
+      "</div>" +
+
       '<div class="cc-popup__footer">' +
-        '<button type="button" class="cc-btn cc-btn--outline" id="cc-popup-reject">Reject All</button>' +
-        '<button type="button" class="cc-btn cc-btn--outline" id="cc-popup-save">Save My Preferences</button>' +
-        '<button type="button" class="cc-btn cc-btn--solid" id="cc-popup-accept">Accept All</button>' +
+      '<button type="button" class="cc-btn cc-btn--solid" id="cc-popup-reject">Reject All</button>' +
+      '<button type="button" class="cc-btn cc-btn--solid" id="cc-popup-save">Save My Preferences</button>' +
+      '<button type="button" class="cc-btn cc-btn--solid" id="cc-popup-accept">Accept All</button>' +
       "</div>";
 
-    var body = popup.querySelector(".cc-popup__body");
+    let body = popup.querySelector(".cc-popup__body");
     config.categories.forEach(function (cat) {
       body.appendChild(buildCategoryRow(cat, currentConsent));
     });
+
+      popup
+      .querySelector(".cc-popup__intro-toggle")
+      .addEventListener("click", function (e) {
+        var more = popup.querySelector(".cc-popup__intro-more");
+        var isHidden = more.style.display === "none";
+        more.style.display = isHidden ? "block" : "none";
+        e.target.textContent = isHidden ? "Show less" : "Show more";
+      });
+
 
     overlay.appendChild(popup);
     document.body.appendChild(overlay);
@@ -210,24 +255,32 @@
     function finishWith(consentObj) {
       saveConsent(consentObj);
       closePopup();
-      var banner = document.getElementById("cc-banner");
+      let banner = document.getElementById("cc-banner");
       if (banner) banner.remove();
       updateFloatingIcon();
     }
 
-    popup.querySelector("#cc-popup-save").addEventListener("click", function () {
-      finishWith(readTogglesAsConsent(popup, config));
-    });
+    popup
+      .querySelector("#cc-popup-save")
+      .addEventListener("click", function () {
+        finishWith(readTogglesAsConsent(popup, config));
+      });
 
-    popup.querySelector("#cc-popup-accept").addEventListener("click", function () {
-      finishWith(allowAllConsent(config));
-    });
+    popup
+      .querySelector("#cc-popup-accept")
+      .addEventListener("click", function () {
+        finishWith(allowAllConsent(config));
+      });
 
-    popup.querySelector("#cc-popup-reject").addEventListener("click", function () {
-      finishWith(necessaryOnlyConsent(config));
-    });
+    popup
+      .querySelector("#cc-popup-reject")
+      .addEventListener("click", function () {
+        finishWith(necessaryOnlyConsent(config));
+      });
 
-    popup.querySelector(".cc-popup__close").addEventListener("click", closePopup);
+    popup
+      .querySelector(".cc-popup__close")
+      .addEventListener("click", closePopup);
 
     overlay.addEventListener("click", function (e) {
       if (e.target === overlay) closePopup();
@@ -241,15 +294,14 @@
     });
   }
 
-
-   function updateFloatingIcon() {
-    var icon = document.getElementById("cc-floating-icon");
+  function updateFloatingIcon() {
+    let icon = document.getElementById("cc-floating-icon");
     if (!icon) return;
     icon.style.display = getConsent() ? "flex" : "none";
   }
 
   function setupFloatingIcon(config) {
-    var icon = document.getElementById("cc-floating-icon");
+    let icon = document.getElementById("cc-floating-icon");
     if (!icon) return;
     icon.addEventListener("click", function () {
       openPopup(config);
@@ -266,8 +318,5 @@
     });
   }
 
-
   document.addEventListener("DOMContentLoaded", init);
-
-
 })();
