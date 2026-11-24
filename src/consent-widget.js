@@ -71,27 +71,27 @@
 
   function createBannerElement(config) {
     let banner = document.createElement("div");
-    banner.id = "cc-banner";
-    banner.className = "cc-banner";
+    banner.id = "cwgt-banner";
+    banner.className = "cwgt-banner";
     banner.innerHTML =
-      '<div class="cc-banner__content">' +
-      '<h2 class="cc-banner__title"></h2>' +
-      '<p class="cc-banner__message"></p>' +
+      '<div class="cwgt-banner__content">' +
+      '<h2 class="cwgt-banner__title"></h2>' +
+      '<p class="cwgt-banner__message"></p>' +
       "</div>" +
-      '<div class="cc-banner__actions">' +
-      '<button type="button" class="cc-btn cc-btn--outline" id="cc-customise">Customise</button>' +
-      '<button type="button" class="cc-btn cc-btn--solid" id="cc-reject">Reject All</button>' +
-      '<button type="button" class="cc-btn cc-btn--solid" id="cc-accept">Accept All</button>' +
+      '<div class="cwgt-banner__actions">' +
+      '<button type="button" class="cwgt-btn cwgt-btn--outline" id="cwgt-customise">Customise</button>' +
+      '<button type="button" class="cwgt-btn cwgt-btn--solid" id="cwgt-reject">Reject All</button>' +
+      '<button type="button" class="cwgt-btn cwgt-btn--solid" id="cwgt-accept">Accept All</button>' +
       "</div>";
 
-    banner.querySelector(".cc-banner__title").textContent = config.banner.title;
+    banner.querySelector(".cwgt-banner__title").textContent = config.banner.title;
 
-    let messageEl = banner.querySelector(".cc-banner__message");
+    let messageEl = banner.querySelector(".cwgt-banner__message");
     messageEl.textContent = config.banner.message + " ";
 
     let link = document.createElement("a");
     link.href = config.banner.privacyPolicyUrl;
-    link.className = "cc-banner__link";
+    link.className = "cwgt-banner__link";
     link.textContent = config.banner.privacyPolicyText;
     messageEl.appendChild(link);
 
@@ -102,20 +102,20 @@
     let banner = createBannerElement(config);
     document.body.appendChild(banner);
 
-    banner.querySelector("#cc-accept").addEventListener("click", function () {
+    banner.querySelector("#cwgt-accept").addEventListener("click", function () {
       saveConsent(allowAllConsent(config));
       banner.remove();
       updateFloatingIcon();
     });
 
-    banner.querySelector("#cc-reject").addEventListener("click", function () {
+    banner.querySelector("#cwgt-reject").addEventListener("click", function () {
       saveConsent(necessaryOnlyConsent(config));
       banner.remove();
       updateFloatingIcon();
     });
 
     banner
-      .querySelector("#cc-customise")
+      .querySelector("#cwgt-customise")
       .addEventListener("click", function () {
         openPopup(config);
       });
@@ -123,44 +123,44 @@
 
   function buildCategoryRow(cat, currentConsent) {
     var row = document.createElement("div");
-    row.className = "cc-category";
+    row.className = "cwgt-category";
 
     var checked = currentConsent ? !!currentConsent[cat.id] : !!cat.required;
 
     var toggleHtml;
     if (cat.required) {
       toggleHtml =
-        '<span class="cc-category__always-active">Always Active</span>';
+        '<span class="cwgt-category__always-active">Always Active</span>';
     } else {
       toggleHtml =
-        '<label class="cc-toggle">' +
+        '<label class="cwgt-toggle">' +
         '<input type="checkbox" data-category="' +
         cat.id +
         '" ' +
         (checked ? "checked" : "") +
         ">" +
-        '<span class="cc-toggle__slider"></span>' +
+        '<span class="cwgt-toggle__slider"></span>' +
         "</label>";
     }
 
     row.innerHTML =
-      '<div class="cc-category__row">' +
-      '<span><span class="cc-category__chevron">&#9656;</span>' +
-      '<span class="cc-category__name"></span></span>' +
+      '<div class="cwgt-category__row">' +
+      '<span><span class="cwgt-category__chevron">&#9656;</span>' +
+      '<span class="cwgt-category__name"></span></span>' +
       toggleHtml +
       "</div>" +
-      '<p class="cc-category__desc"></p>' +
-      '<div class="cc-category__cookies"></div>';
+      '<p class="cwgt-category__desc"></p>' +
+      '<div class="cwgt-category__cookies"></div>';
 
-    row.querySelector(".cc-category__name").textContent = cat.name;
-    row.querySelector(".cc-category__desc").textContent = cat.description;
+    row.querySelector(".cwgt-category__name").textContent = cat.name;
+    row.querySelector(".cwgt-category__desc").textContent = cat.description;
 
-    var cookiesEl = row.querySelector(".cc-category__cookies");
-    var chevronEl = row.querySelector(".cc-category__chevron");
+    var cookiesEl = row.querySelector(".cwgt-category__cookies");
+    var chevronEl = row.querySelector(".cwgt-category__chevron");
 
     cat.cookies.forEach(function (cookie) {
       var cookieRow = document.createElement("div");
-      cookieRow.className = "cc-cookie-row";
+      cookieRow.className = "cwgt-cookie-row";
       cookieRow.innerHTML =
         "<div><strong>Name:</strong> </div>" +
         "<div><strong>Duration:</strong> </div>" +
@@ -173,11 +173,11 @@
     });
 
     row
-      .querySelector(".cc-category__row")
+      .querySelector(".cwgt-category__row")
       .addEventListener("click", function (e) {
-        if (e.target.closest(".cc-toggle")) return;
-        cookiesEl.classList.toggle("cc-open");
-        chevronEl.classList.toggle("cc-open");
+        if (e.target.closest(".cwgt-toggle")) return;
+        cookiesEl.classList.toggle("cwgt-open");
+        chevronEl.classList.toggle("cwgt-open");
       });
 
     return row;
@@ -193,56 +193,56 @@
   }
 
   function closePopup() {
-    let overlay = document.getElementById("cc-overlay");
+    let overlay = document.getElementById("cwgt-overlay");
     if (overlay) overlay.remove();
   }
 
   function openPopup(config) {
-    if (document.getElementById("cc-overlay")) return;
+    if (document.getElementById("cwgt-overlay")) return;
 
     let currentConsent = getConsent();
 
     let overlay = document.createElement("div");
-    overlay.id = "cc-overlay";
-    overlay.className = "cc-overlay";
+    overlay.id = "cwgt-overlay";
+    overlay.className = "cwgt-overlay";
 
     let popup = document.createElement("div");
-    popup.className = "cc-popup";
+    popup.className = "cwgt-popup";
     popup.setAttribute("role", "dialog");
     popup.setAttribute("aria-modal", "true");
 
     popup.innerHTML =
-      '<div class="cc-popup__header">' +
+      '<div class="cwgt-popup__header">' +
       "<h2>Customise Consent Preferences</h2>" +
-      '<button type="button" class="cc-popup__close" aria-label="Close">&times;</button>' +
+      '<button type="button" class="cwgt-popup__close" aria-label="Close">&times;</button>' +
       "</div>" +
-           '<div class="cc-popup__body">' +
-        '<div class="cc-popup__intro">' +
+           '<div class="cwgt-popup__body">' +
+        '<div class="cwgt-popup__intro">' +
           "<p>We use cookies to help you navigate efficiently and perform certain functions. You will find detailed information about all cookies under each consent category below.</p>" +
-          '<div class="cc-popup__intro-more" style="display:none;">' +
+          '<div class="cwgt-popup__intro-more" style="display:none;">' +
             '<p>The cookies that are categorised as "Necessary" are stored on your browser as they are essential for enabling the basic functionalities of the site.</p>' +
             "<p>We also use third-party cookies that help us analyse how you use this website, store your preferences, and provide the content and advertisements that are relevant to you. These cookies will only be stored in your browser with your prior consent.</p>" +
             "<p>You can choose to enable or disable some or all of these cookies but disabling some of them may affect your browsing experience.</p>" +
           "</div>" +
-          '<a class="cc-popup__intro-toggle">Show more</a>' +
+          '<a class="cwgt-popup__intro-toggle">Show more</a>' +
         "</div>" +
       "</div>" +
 
-      '<div class="cc-popup__footer">' +
-      '<button type="button" class="cc-btn cc-btn--solid" id="cc-popup-reject">Reject All</button>' +
-      '<button type="button" class="cc-btn cc-btn--solid" id="cc-popup-save">Save My Preferences</button>' +
-      '<button type="button" class="cc-btn cc-btn--solid" id="cc-popup-accept">Accept All</button>' +
+      '<div class="cwgt-popup__footer">' +
+      '<button type="button" class="cwgt-btn cwgt-btn--solid" id="cwgt-popup-reject">Reject All</button>' +
+      '<button type="button" class="cwgt-btn cwgt-btn--solid" id="cwgt-popup-save">Save My Preferences</button>' +
+      '<button type="button" class="cwgt-btn cwgt-btn--solid" id="cwgt-popup-accept">Accept All</button>' +
       "</div>";
 
-    let body = popup.querySelector(".cc-popup__body");
+    let body = popup.querySelector(".cwgt-popup__body");
     config.categories.forEach(function (cat) {
       body.appendChild(buildCategoryRow(cat, currentConsent));
     });
 
       popup
-      .querySelector(".cc-popup__intro-toggle")
+      .querySelector(".cwgt-popup__intro-toggle")
       .addEventListener("click", function (e) {
-        var more = popup.querySelector(".cc-popup__intro-more");
+        var more = popup.querySelector(".cwgt-popup__intro-more");
         var isHidden = more.style.display === "none";
         more.style.display = isHidden ? "block" : "none";
         e.target.textContent = isHidden ? "Show less" : "Show more";
@@ -255,31 +255,31 @@
     function finishWith(consentObj) {
       saveConsent(consentObj);
       closePopup();
-      let banner = document.getElementById("cc-banner");
+      let banner = document.getElementById("cwgt-banner");
       if (banner) banner.remove();
       updateFloatingIcon();
     }
 
     popup
-      .querySelector("#cc-popup-save")
+      .querySelector("#cwgt-popup-save")
       .addEventListener("click", function () {
         finishWith(readTogglesAsConsent(popup, config));
       });
 
     popup
-      .querySelector("#cc-popup-accept")
+      .querySelector("#cwgt-popup-accept")
       .addEventListener("click", function () {
         finishWith(allowAllConsent(config));
       });
 
     popup
-      .querySelector("#cc-popup-reject")
+      .querySelector("#cwgt-popup-reject")
       .addEventListener("click", function () {
         finishWith(necessaryOnlyConsent(config));
       });
 
     popup
-      .querySelector(".cc-popup__close")
+      .querySelector(".cwgt-popup__close")
       .addEventListener("click", closePopup);
 
     overlay.addEventListener("click", function (e) {
@@ -295,13 +295,13 @@
   }
 
   function updateFloatingIcon() {
-    let icon = document.getElementById("cc-floating-icon");
+    let icon = document.getElementById("cwgt-floating-icon");
     if (!icon) return;
     icon.style.display = getConsent() ? "flex" : "none";
   }
 
   function setupFloatingIcon(config) {
-    let icon = document.getElementById("cc-floating-icon");
+    let icon = document.getElementById("cwgt-floating-icon");
     if (!icon) return;
     icon.addEventListener("click", function () {
       openPopup(config);
