@@ -298,15 +298,28 @@
     });
   }
 
-  function updateFloatingIcon() {
+  function getOrCreateFloatingIcon() {
     let icon = document.getElementById("cwgt-floating-icon");
-    if (!icon) return;
+    if (icon) return icon;
+
+    icon = document.createElement("button");
+    icon.type = "button";
+    icon.id = "cwgt-floating-icon";
+    icon.className = "cwgt-floating-icon";
+    icon.setAttribute("aria-label", "Cookie preferences");
+    icon.style.display = "none";
+    icon.textContent = "🍪";
+    document.body.appendChild(icon);
+    return icon;
+  }
+
+  function updateFloatingIcon() {
+    let icon = getOrCreateFloatingIcon();
     icon.style.display = getConsent() ? "flex" : "none";
   }
 
   function setupFloatingIcon(config) {
-    let icon = document.getElementById("cwgt-floating-icon");
-    if (!icon) return;
+    let icon = getOrCreateFloatingIcon();
     icon.addEventListener("click", function () {
       openPopup(config);
     });
