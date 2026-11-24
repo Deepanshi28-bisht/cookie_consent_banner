@@ -35,22 +35,26 @@
     setCookie(COOKIE_NAME, JSON.stringify(consentObj), COOKIE_DAYS);
   }
 
-  // Figure out where this script file lives, so config.json can be
-  // found relative to it (not relative to whatever page includes it).
+  // Figure out where this script file lives, so config.json and the
+  // stylesheet can be found relative to it (not relative to whatever
+  // page includes it).
   let scriptEl = document.currentScript;
-  console.log(scriptEl, "scriptllll");
-
   let baseUrl = scriptEl ? scriptEl.src.replace(/[^/]+$/, "") : "./";
-  console.log(baseUrl, "base");
-
   let CONFIG_URL = baseUrl + "config.json";
-
-  console.log(CONFIG_URL, "CONFIG_URL");
+  let CSS_URL = baseUrl + "cookie-banner.css";
 
   function loadConfig() {
     return fetch(CONFIG_URL).then(function (res) {
       return res.json();
     });
+  }
+
+  function loadStylesheet() {
+    if (document.querySelector('link[href="' + CSS_URL + '"]')) return;
+    let link = document.createElement("link");
+    link.rel = "stylesheet";
+    link.href = CSS_URL;
+    document.head.appendChild(link);
   }
 
   function allowAllConsent(config) {
@@ -309,6 +313,7 @@
   }
 
   function init() {
+    loadStylesheet();
     loadConfig().then(function (config) {
       if (!getConsent()) {
         showBanner(config);
